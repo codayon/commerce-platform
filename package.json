@@ -1,0 +1,18 @@
+{
+  "name": "cit-monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.58.0",
+    "oxlint": "^1.73.0"
+  }
+}

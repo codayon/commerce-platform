@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2023",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
+}
