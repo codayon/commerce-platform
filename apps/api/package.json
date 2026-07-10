@@ -8,10 +8,12 @@
     "dev": "node --watch src/index.ts"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "mongoose": "^9.7.4"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
+    "@types/mongoose": "^5.11.96",
     "@types/node": "^24.13.3",
     "typescript": "^6.0.3"
   }
