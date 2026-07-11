@@ -5,16 +5,10 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "dev": "node --watch src/index.ts"
+    "dev": "node --watch src/index.js"
   },
   "dependencies": {
     "express": "^5.2.1",
     "mongoose": "^9.7.4"
-  },
-  "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/mongoose": "^5.11.96",
-    "@types/node": "^24.13.3",
-    "typescript": "^6.0.3"
   }
 }

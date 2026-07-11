@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-async function database(): Promise<void> {
+async function database() {
   const mongoUri = process.env.MONGODB_URI;
 
   if (!mongoUri) {
