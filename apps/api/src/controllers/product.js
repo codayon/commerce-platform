@@ -1,14 +1,15 @@
 import mongoose from "mongoose";
-import Product from "../models/Product.js";
+import Product from "../models/product.js";
 
-const createProduct = async (req, res) => {
+const requiredFields = ["name", "description", "price", "category"];
+const allowedFields = ["name", "description", "price", "category", "stock", "images"];
+
+async function createProduct(req, res) {
   try {
     const { name, description, price, category, stock, images } = req.body;
 
-    const requiredFields = ["name", "description", "price", "category"];
-
     for (const field of requiredFields) {
-      if (!req.body[field]) {
+      if (req.body[field] === undefined) {
         return res.status(400).json({
           success: false,
           message: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`,
@@ -16,7 +17,7 @@ const createProduct = async (req, res) => {
       }
     }
 
-    const product = new Product({
+    const product = await Product.create({
       name,
       description,
       price,
@@ -25,23 +26,21 @@ const createProduct = async (req, res) => {
       images,
     });
 
-    const savedProduct = await product.save();
-
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Product created successfully",
-      data: savedProduct,
+      data: product,
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({
+    console.error(err);
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
   }
-};
+}
 
-const deleteProduct = async (req, res) => {
+async function deleteProduct(req, res) {
   try {
     const { productId } = req.params;
 
@@ -61,20 +60,20 @@ const deleteProduct = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Product deleted successfully",
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({
+    console.error(err);
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
   }
-};
+}
 
-const getProduct = async (req, res) => {
+async function getProduct(req, res) {
   try {
     const { productId } = req.params;
 
@@ -94,21 +93,21 @@ const getProduct = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Product fetched successfully",
       data: product,
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({
+    console.error(err);
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
   }
-};
+}
 
-const updateProduct = async (req, res) => {
+async function updateProduct(req, res) {
   try {
     const { productId } = req.params;
 
@@ -119,15 +118,13 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    const allowedFields = ["name", "description", "price", "category", "stock", "images"];
-
     const updates = {};
 
-    allowedFields.forEach((field) => {
+    for (const field of allowedFields) {
       if (req.body[field] !== undefined) {
         updates[field] = req.body[field];
       }
-    });
+    }
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({
@@ -153,18 +150,18 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Product updated successfully",
       data: product,
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({
+    console.error(err);
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
   }
-};
+}
 
 export { createProduct, deleteProduct, getProduct, updateProduct };

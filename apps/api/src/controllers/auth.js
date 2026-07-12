@@ -1,10 +1,10 @@
-import bcrypt from "bcryptjs";
-import generateOtp from "../utils/generate-otp.js";
-import sendOtpEmail from "../utils/email.js";
-import User from "../models/User.js";
+import { compare } from "bcryptjs";
 import validator from "validator";
+import User from "../models/user.js";
+import sendOtpEmail from "../utils/email.js";
+import generateOtp from "../utils/generate-otp.js";
 
-const logIn = async (req, res) => {
+async function logIn(req, res) {
   try {
     if (req.session.userId) {
       return res.status(400).json({
@@ -13,16 +13,15 @@ const logIn = async (req, res) => {
       });
     }
 
-    let { email, password } = req.body;
+    const { password } = req.body;
+    const email = req.body.email?.trim().toLowerCase();
 
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Fill up both fields",
+        message: "Email and password are required",
       });
     }
-
-    email = email.trim().toLowerCase();
 
     if (!validator.isEmail(email)) {
       return res.status(401).json({
@@ -40,7 +39,7 @@ const logIn = async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await compare(password, user.password);
 
     if (!isMatch) {
       return res.status(401).json({
@@ -59,20 +58,20 @@ const logIn = async (req, res) => {
     req.session.userId = user._id;
     req.session.email = user.email;
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "You have successfully logged in",
     });
   } catch (err) {
-    console.log(err);
-    res.status(400).json({
-      success: true,
+    console.error(err);
+    return res.status(500).json({
+      success: false,
       message: "Internal server error",
     });
   }
-};
+}
 
-const logOut = (req, res) => {
+function logOut(req, res) {
   if (!req.session.userId) {
     return res.status(400).json({
       success: false,
@@ -80,7 +79,9 @@ const logOut = (req, res) => {
     });
   }
 
-  req.session.destroy((err) => {
+  req.session.destroy(destroySession);
+
+  function destroySession(err) {
     if (err) {
       return res.status(500).json({
         success: false,
@@ -94,10 +95,10 @@ const logOut = (req, res) => {
       success: true,
       message: "You have successfully logged out",
     });
-  });
-};
+  }
+}
 
-const resendOtp = async (req, res) => {
+async function resendOtp(req, res) {
   try {
     const { email } = req.body;
 
@@ -125,33 +126,31 @@ const resendOtp = async (req, res) => {
     }
 
     const { otp, otpExpires } = generateOtp();
-
     user.otp = otp;
     user.otpExpires = otpExpires;
 
     await user.save({ validateBeforeSave: false });
     await sendOtpEmail(user.email, user.otp, user.username);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "A new OTP has been sent to your email",
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      success: true,
+    console.error(err);
+    return res.status(500).json({
+      success: false,
       message: "Internal server error",
     });
   }
-};
+}
 
-const signUp = async (req, res) => {
+async function signUp(req, res) {
   try {
     const { email, password, username } = req.body;
-
     const { otp, otpExpires } = generateOtp();
 
-    const newUser = new User({
+    const user = await User.create({
       email,
       otp,
       otpExpires,
@@ -159,34 +158,26 @@ const signUp = async (req, res) => {
       username,
     });
 
-    await newUser.save();
+    await sendOtpEmail(user.email, user.otp, user.username);
 
-    await sendOtpEmail(newUser.email, newUser.otp, newUser.username);
-
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "An OTP has been sent to your email",
-      data: {
-        user: newUser,
-      },
+      data: { user },
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({
+    console.error(err);
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
   }
-};
+}
 
-const verifyOtp = async (req, res) => {
+async function verifyOtp(req, res) {
   try {
-    let { email, otp } = req.body;
-
-    const user = await User.findOne({
-      email,
-      otp,
-    });
+    const { email, otp } = req.body;
+    const user = await User.findOne({ email, otp });
 
     if (!user) {
       return res.status(400).json({
@@ -207,17 +198,17 @@ const verifyOtp = async (req, res) => {
     user.otpExpires = undefined;
     await user.save({ validateBeforeSave: false });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Email verified successfully",
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({
+    console.error(err);
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
   }
-};
+}
 
 export { logIn, logOut, resendOtp, signUp, verifyOtp };

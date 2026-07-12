@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+import { hash } from "bcryptjs";
 import { Schema, model } from "mongoose";
 import validator from "validator";
 
@@ -44,7 +44,7 @@ const userSchema = new Schema(
 
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
-  this.password = await bcrypt.hash(this.password, 12);
+  this.password = await hash(this.password, 12);
 });
 
 const User = model("User", userSchema);

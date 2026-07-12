@@ -1,4 +1,4 @@
-const protect = (req, res, next) => {
+function protect(req, res, next) {
   if (!req.session.userId) {
     return res.status(401).json({
       success: false,
@@ -6,7 +6,7 @@ const protect = (req, res, next) => {
     });
   }
 
-  next();
-};
+  return next();
+}
 
 export { protect };

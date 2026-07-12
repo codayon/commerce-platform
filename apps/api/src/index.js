@@ -2,9 +2,11 @@ import { loadEnvFile } from "node:process";
 loadEnvFile();
 
 import express from "express";
-import database from "./config/database.js";
-import rootRouter from "./routes/index.js";
 import session from "express-session";
+import swaggerUi from "swagger-ui-express";
+import database from "./config/database.js";
+import { swaggerSpec } from "./config/swagger.js";
+import rootRouter from "./routes/index.js";
 
 const app = express();
 const port = 3000;
@@ -24,6 +26,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/", rootRouter);
 
 try {
