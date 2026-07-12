@@ -10,8 +10,8 @@ async function database() {
   try {
     await mongoose.connect(mongoUri);
     console.log("Connected to MongoDB");
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err);
     process.exit(1);
   }
 }
