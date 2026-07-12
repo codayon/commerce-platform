@@ -147,26 +147,96 @@ async function resendOtp(req, res) {
 
 async function signUp(req, res) {
   try {
-    const { email, password, username } = req.body;
+    const username = req.body.username?.trim().toLowerCase();
+    const email = req.body.email?.trim().toLowerCase();
+    const { password } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username, email, and password are required",
+      });
+    }
+
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format",
+      });
+    }
+
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+
+    if (existingUser?.isVerified) {
+      const field = existingUser.email === email ? "Email" : "Username";
+      return res.status(409).json({
+        success: false,
+        message: `${field} is already in use`,
+      });
+    }
+
     const { otp, otpExpires } = generateOtp();
+    let user = existingUser;
+    let status = 201;
 
-    const user = await User.create({
-      email,
-      otp,
-      otpExpires,
-      password,
-      username,
-    });
+    if (user) {
+      user.otp = otp;
+      user.otpExpires = otpExpires;
+      await user.save({ validateBeforeSave: false });
+      status = 200;
+    } else {
+      user = await User.create({
+        email,
+        otp,
+        otpExpires,
+        password,
+        username,
+      });
+    }
 
-    await sendOtpEmail(user.email, user.otp, user.username);
+    try {
+      await sendOtpEmail(user.email, user.otp, user.username);
+    } catch (err) {
+      console.error("Failed to send signup OTP:", err);
+      return res.status(503).json({
+        success: false,
+        message: "Unable to send the verification email. Please try again.",
+      });
+    }
 
-    return res.status(201).json({
+    return res.status(status).json({
       success: true,
       message: "An OTP has been sent to your email",
-      data: { user },
+      data: {
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          isVerified: user.isVerified,
+          role: user.role,
+        },
+      },
     });
   } catch (err) {
     console.error(err);
+
+    if (err.name === "ValidationError") {
+      return res.status(400).json({
+        success: false,
+        message: Object.values(err.errors)
+          .map((error) => error.message)
+          .join(", "),
+      });
+    }
+
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyPattern)[0];
+      return res.status(409).json({
+        success: false,
+        message: `${field === "email" ? "Email" : "Username"} is already in use`,
+      });
+    }
+
     return res.status(500).json({
       success: false,
       message: "Internal server error",
