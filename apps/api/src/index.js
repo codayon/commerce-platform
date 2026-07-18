@@ -5,15 +5,16 @@ import express from "express";
 import session from "express-session";
 import swaggerUi from "swagger-ui-express";
 import database from "./config/database.js";
-import { swaggerSpec } from "./config/swagger.js";
+import { openapiSpec } from "./config/swagger.js";
 import rootRouter from "./routes/index.js";
+import { errorHandler } from "./middlewares/error.js";
 
 const app = express();
 const port = 3000;
 
 const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) {
-  throw new Error("SESSION_SECRET is not defined in environment variables");
+  throw new Error("SESSION_SECRET is not defined");
 }
 
 app.use(
@@ -26,8 +27,12 @@ app.use(
 );
 
 app.use(express.json());
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
+
 app.use("/", rootRouter);
+
+app.use(errorHandler);
 
 try {
   await database();

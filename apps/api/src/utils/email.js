@@ -1,7 +1,4 @@
-import { loadEnvFile } from "node:process";
 import nodemailer from "nodemailer";
-
-loadEnvFile();
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
