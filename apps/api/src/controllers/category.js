@@ -1,6 +1,6 @@
 import Category from "../models/category.js";
 
-async function createCategory(req, res) {
+async function createCategory(req, res, next) {
   try {
     const { name, description, parent } = req.body;
 
@@ -19,15 +19,11 @@ async function createCategory(req, res) {
       data: category,
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return next(err);
   }
 }
 
-async function getCategory(req, res) {
+async function getCategory(req, res, next) {
   try {
     const { categoryId } = req.params;
     const category = await Category.findById(categoryId).populate("children");
@@ -45,11 +41,7 @@ async function getCategory(req, res) {
       data: category,
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return next(err);
   }
 }
 

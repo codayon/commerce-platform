@@ -1,12 +1,11 @@
-import mongoose from "mongoose";
+import { Types } from "mongoose";
 import Product from "../models/product.js";
 
-const requiredFields = ["name", "description", "price", "category"];
-const allowedFields = ["name", "description", "price", "category", "stock", "images"];
-
-async function createProduct(req, res) {
+async function createProduct(req, res, next) {
   try {
     const { name, description, price, category, stock, images } = req.body;
+
+    const requiredFields = ["name", "description", "price", "category"];
 
     for (const field of requiredFields) {
       if (req.body[field] === undefined) {
@@ -32,19 +31,15 @@ async function createProduct(req, res) {
       data: product,
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return next(err);
   }
 }
 
-async function deleteProduct(req, res) {
+async function deleteProduct(req, res, next) {
   try {
     const { productId } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(productId)) {
+    if (!Types.ObjectId.isValid(productId)) {
       return res.status(400).json({
         success: false,
         message: "Invalid product ID",
@@ -65,19 +60,15 @@ async function deleteProduct(req, res) {
       message: "Product deleted successfully",
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return next(err);
   }
 }
 
-async function getProduct(req, res) {
+async function getProduct(req, res, next) {
   try {
     const { productId } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(productId)) {
+    if (!Types.ObjectId.isValid(productId)) {
       return res.status(400).json({
         success: false,
         message: "Invalid product ID",
@@ -99,25 +90,22 @@ async function getProduct(req, res) {
       data: product,
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return next(err);
   }
 }
 
-async function updateProduct(req, res) {
+async function updateProduct(req, res, next) {
   try {
     const { productId } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(productId)) {
+    if (!Types.ObjectId.isValid(productId)) {
       return res.status(400).json({
         success: false,
         message: "Invalid product ID",
       });
     }
 
+    const allowedFields = ["name", "description", "price", "category", "stock", "images"];
     const updates = {};
 
     for (const field of allowedFields) {
@@ -156,11 +144,7 @@ async function updateProduct(req, res) {
       data: product,
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return next(err);
   }
 }
 
