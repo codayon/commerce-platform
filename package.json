@@ -1,5 +1,5 @@
 {
-  "name": "cit-monorepo",
+  "name": "commerce-platform",
   "private": true,
   "workspaces": [
     "apps/*"
