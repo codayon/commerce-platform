@@ -28,7 +28,7 @@ app.use(
 
 app.use(express.json());
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
 
 app.use("/", rootRouter);
 
