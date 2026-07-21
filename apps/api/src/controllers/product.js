@@ -170,6 +170,12 @@ async function listProducts(req, res, next) {
     }
 
     if (category) {
+      if (!Types.ObjectId.isValid(category)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid category ID",
+        });
+      }
       filter.category = category;
     }
 
@@ -191,10 +197,14 @@ async function listProducts(req, res, next) {
     const parsedLimit = Math.max(1, parseInt(limit) || 10);
     const skip = (parsedPage - 1) * parsedLimit;
 
+    const allowedSortFields = ["price", "name", "createdAt", "updatedAt"];
+    const sortField = sort.startsWith("-") ? sort.slice(1) : sort;
+    const safeSort = allowedSortFields.includes(sortField) ? sort : "-createdAt";
+
     const total = await Product.countDocuments(filter);
     const products = await Product.find(filter)
       .populate("category")
-      .sort(sort)
+      .sort(safeSort)
       .skip(skip)
       .limit(parsedLimit);
 
