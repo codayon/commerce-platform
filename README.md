@@ -106,6 +106,14 @@ npm run dev -w api
 npm run dev -w web
 ```
 
+The frontend dev server proxies `/api` to the backend at
+`http://localhost:3000`, so no CORS configuration is needed while developing.
+Authentication uses the session cookie set by the backend.
+
+The web app is a minimal, mobile-friendly storefront: browse and search
+products, manage a cart, check out, view order history and details, and manage
+your account. It is styled with Tailwind CSS and DaisyUI.
+
 ## API Documentation
 
 Interactive API documentation is available while the backend is running at `/api/docs`.
