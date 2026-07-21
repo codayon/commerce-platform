@@ -148,4 +148,72 @@ async function updateProduct(req, res, next) {
   }
 }
 
-export { createProduct, deleteProduct, getProduct, updateProduct };
+async function listProducts(req, res, next) {
+  try {
+    const {
+      q,
+      category,
+      minPrice,
+      maxPrice,
+      page = 1,
+      limit = 10,
+      sort = "-createdAt",
+    } = req.query;
+
+    const filter = {};
+
+    if (q) {
+      filter.$or = [
+        { name: { $regex: q, $options: "i" } },
+        { description: { $regex: q, $options: "i" } },
+      ];
+    }
+
+    if (category) {
+      filter.category = category;
+    }
+
+    if (minPrice !== undefined && minPrice !== "") {
+      const min = parseFloat(minPrice);
+      if (!isNaN(min)) {
+        filter.price = { ...filter.price, $gte: min };
+      }
+    }
+
+    if (maxPrice !== undefined && maxPrice !== "") {
+      const max = parseFloat(maxPrice);
+      if (!isNaN(max)) {
+        filter.price = { ...filter.price, $lte: max };
+      }
+    }
+
+    const parsedPage = Math.max(1, parseInt(page) || 1);
+    const parsedLimit = Math.max(1, parseInt(limit) || 10);
+    const skip = (parsedPage - 1) * parsedLimit;
+
+    const total = await Product.countDocuments(filter);
+    const products = await Product.find(filter)
+      .populate("category")
+      .sort(sort)
+      .skip(skip)
+      .limit(parsedLimit);
+
+    return res.status(200).json({
+      success: true,
+      message: "Products fetched successfully",
+      data: {
+        products,
+        pagination: {
+          total,
+          page: parsedPage,
+          limit: parsedLimit,
+          totalPages: Math.ceil(total / parsedLimit),
+        },
+      },
+    });
+  } catch (err) {
+    return next(err);
+  }
+}
+
+export { createProduct, deleteProduct, getProduct, updateProduct, listProducts };

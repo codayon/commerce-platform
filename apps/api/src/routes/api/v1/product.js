@@ -4,6 +4,7 @@ import {
   deleteProduct,
   getProduct,
   updateProduct,
+  listProducts,
 } from "../../../controllers/product.js";
 
 const router = Router();
@@ -115,5 +116,47 @@ router.delete("/delete-product/:productId", deleteProduct);
  *       500: { description: Internal server error }
  */
 router.patch("/update-product/:productId", updateProduct);
+
+/**
+ * @openapi
+ * /product/list-products:
+ *   get:
+ *     summary: List all products (with optional search and filters)
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         schema: { type: string }
+ *         description: Search query matching name or description
+ *       - in: query
+ *         name: category
+ *         schema: { type: string }
+ *         description: Category ID to filter by
+ *       - in: query
+ *         name: minPrice
+ *         schema: { type: number }
+ *         description: Minimum price filter
+ *       - in: query
+ *         name: maxPrice
+ *         schema: { type: number }
+ *         description: Maximum price filter
+ *       - in: query
+ *         name: page
+ *         schema: { type: integer, default: 1 }
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, default: 10 }
+ *         description: Limit of products per page
+ *       - in: query
+ *         name: sort
+ *         schema: { type: string, default: "-createdAt" }
+ *         description: Sort field and order (e.g. price, -price, createdAt, -createdAt)
+ *     responses:
+ *       200:
+ *         description: Products fetched successfully
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/list-products", listProducts);
 
 export default router;
