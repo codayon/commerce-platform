@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createCategory, getCategory } from "../../../controllers/category.js";
+import { createCategory, getCategory, listCategories } from "../../../controllers/category.js";
 
 const router = Router();
 
@@ -43,5 +43,33 @@ router.post("/create-category", createCategory);
  *       500: { description: Internal server error }
  */
 router.get("/get-category/:categoryId", getCategory);
+
+/**
+ * @openapi
+ * /category/list-categories:
+ *   get:
+ *     summary: Get all categories
+ *     responses:
+ *       200:
+ *         description: Categories listed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean }
+ *                 message: { type: string }
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id: { type: string }
+ *                       name: { type: string }
+ *                       description: { type: string }
+ *                       parent: { type: string, nullable: true }
+ *       500: { description: Internal server error }
+ */
+router.get("/list-categories", listCategories);
 
 export default router;

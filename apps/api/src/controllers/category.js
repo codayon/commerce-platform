@@ -4,10 +4,17 @@ async function createCategory(req, res, next) {
   try {
     const { name, description, parent } = req.body;
 
-    if (!name || !description) {
+    if (!name) {
       return res.status(400).json({
         success: false,
-        message: "Name and description are required",
+        message: "Name is required",
+      });
+    }
+
+    if (!description) {
+      return res.status(400).json({
+        success: false,
+        message: "Description is required",
       });
     }
 
@@ -45,4 +52,18 @@ async function getCategory(req, res, next) {
   }
 }
 
-export { createCategory, getCategory };
+async function listCategories(req, res, next) {
+  try {
+    const categories = await Category.find().populate("parent");
+
+    return res.status(200).json({
+      success: true,
+      message: "Categories listed successfully",
+      data: categories,
+    });
+  } catch (err) {
+    return next(err);
+  }
+}
+
+export { createCategory, getCategory, listCategories };
