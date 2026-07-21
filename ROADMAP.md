@@ -32,9 +32,9 @@
 
 ### Catalog
 
-- [ ] List products
-- [ ] Product search
-- [ ] List categories
+- [x] List products
+- [x] Product search
+- [x] List categories
 
 ### Cart
 

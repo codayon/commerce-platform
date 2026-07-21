@@ -100,35 +100,45 @@ All API endpoints are prefixed with `/api/v1/`.
 
 ### Authentication
 
-| Method | Endpoint           |
-| ------ | ------------------ |
-| POST   | `/auth/signup`     |
-| POST   | `/auth/login`      |
-| POST   | `/auth/logout`     |
-| POST   | `/auth/verify-otp` |
-| POST   | `/auth/resend-otp` |
+Prefixed with `/auth/`.
+
+| Method | Endpoint      |
+| ------ | ------------- |
+| POST   | `/signup`     |
+| POST   | `/resend-otp` |
+| POST   | `/verify-otp` |
+| POST   | `/login`      |
+| POST   | `/logout`     |
 
 ### Users
 
-| Method | Endpoint        |
-| ------ | --------------- |
-| GET    | `/user/profile` |
+Prefixed with `/user/`.
+
+| Method | Endpoint       |
+| ------ | -------------- |
+| GET    | `/get-profile` |
 
 ### Categories
 
-| Method | Endpoint                |
-| ------ | ----------------------- |
-| POST   | `/category`             |
-| GET    | `/category/:categoryId` |
+Prefixed with `/category/`.
+
+| Method | Endpoint                    |
+| ------ | --------------------------- |
+| POST   | `/create-category`          |
+| GET    | `/get-category/:categoryId` |
+| GET    | `/list-categories`          |
 
 ### Products
 
-| Method | Endpoint              |
-| ------ | --------------------- |
-| POST   | `/product`            |
-| GET    | `/product/:productId` |
-| PATCH  | `/product/:productId` |
-| DELETE | `/product/:productId` |
+Prefixed with `/product/`.
+
+| Method | Endpoint                     |
+| ------ | ---------------------------- |
+| POST   | `/create-product`            |
+| GET    | `/get-product/:productId`    |
+| GET    | `/list-products`             |
+| PATCH  | `/update-product/:productId` |
+| DELETE | `/delete-product/:productId` |
 
 ## Roadmap
 
