@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "./lib/api.js";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
-import { Alert } from "./components/Alert.jsx";
 import AuthView from "./views/AuthView.jsx";
 import ProductsView from "./views/ProductsView.jsx";
 import CartView from "./views/CartView.jsx";
@@ -12,7 +11,6 @@ function Shell() {
   const { user, loading } = useAuth();
   const [tab, setTab] = useState("products");
   const [cartCount, setCartCount] = useState(0);
-  const [error, setError] = useState("");
 
   async function refreshCart() {
     try {
@@ -28,9 +26,7 @@ function Shell() {
   }, [user]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen grid place-items-center">Loading…</div>
-    );
+    return <div className="min-h-screen grid place-items-center">Loading…</div>;
   }
 
   if (!user) {
@@ -72,10 +68,7 @@ function Shell() {
     <div className="min-h-screen bg-base-200">
       <div className="navbar bg-base-100 shadow-sm">
         <div className="flex-1 px-2">
-          <button
-            className="btn btn-ghost text-lg font-bold"
-            onClick={() => setTab("products")}
-          >
+          <button className="btn btn-ghost text-lg font-bold" onClick={() => setTab("products")}>
             Commerce Platform
           </button>
         </div>
@@ -83,15 +76,10 @@ function Shell() {
           <ul className="menu menu-horizontal px-1 gap-1">
             {tabs.map((t) => (
               <li key={t.id}>
-                <button
-                  className={tab === t.id ? "active" : ""}
-                  onClick={() => setTab(t.id)}
-                >
+                <button className={tab === t.id ? "active" : ""} onClick={() => setTab(t.id)}>
                   {t.label}
                   {t.id === "cart" && cartCount > 0 && (
-                    <span className="badge badge-sm badge-primary">
-                      {cartCount}
-                    </span>
+                    <span className="badge badge-sm badge-primary">{cartCount}</span>
                   )}
                 </button>
               </li>
@@ -103,11 +91,7 @@ function Shell() {
       {/* Mobile bottom tabs */}
       <div className="btm-nav md:hidden">
         {tabs.map((t) => (
-          <button
-            key={t.id}
-            className={tab === t.id ? "active" : ""}
-            onClick={() => setTab(t.id)}
-          >
+          <button key={t.id} className={tab === t.id ? "active" : ""} onClick={() => setTab(t.id)}>
             <span>{t.label}</span>
             {t.id === "cart" && cartCount > 0 && (
               <span className="badge badge-sm badge-primary">{cartCount}</span>
@@ -116,10 +100,7 @@ function Shell() {
         ))}
       </div>
 
-      <main className="p-4 pb-20 md:pb-4 max-w-5xl mx-auto">
-        {error && <Alert type="error">{error}</Alert>}
-        {renderTab()}
-      </main>
+      <main className="p-4 pb-20 md:pb-4 max-w-5xl mx-auto">{renderTab()}</main>
     </div>
   );
 }

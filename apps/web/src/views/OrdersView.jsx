@@ -10,11 +10,7 @@ function StatusBadge({ status }) {
     delivered: "badge-secondary",
     cancelled: "badge-error",
   };
-  return (
-    <span className={`badge ${cls[status] || "badge-ghost"} capitalize`}>
-      {status}
-    </span>
-  );
+  return <span className={`badge ${cls[status] || "badge-ghost"} capitalize`}>{status}</span>;
 }
 
 export default function OrdersView() {
@@ -64,9 +60,7 @@ export default function OrdersView() {
           <p className="text-sm opacity-60">
             Placed {new Date(selected.createdAt).toLocaleString()}
           </p>
-          <p className="text-sm opacity-60 mb-2">
-            Payment: {selected.payment?.status || "—"}
-          </p>
+          <p className="text-sm opacity-60 mb-2">Payment: {selected.payment?.status || "—"}</p>
           <ul className="divide-y">
             {selected.items.map((i, idx) => (
               <li key={idx} className="py-2 flex justify-between">
@@ -87,7 +81,6 @@ export default function OrdersView() {
   }
 
   if (loading) return <div className="text-center py-8">Loading…</div>;
-  {error && <Alert type="error">{error}</Alert>}
 
   if (orders.length === 0) {
     return <Alert type="info">You have no orders yet.</Alert>;
@@ -106,8 +99,7 @@ export default function OrdersView() {
               <div>
                 <p className="font-medium">Order · ${o.totalAmount}</p>
                 <p className="text-xs opacity-60">
-                  {new Date(o.createdAt).toLocaleDateString()} ·{" "}
-                  {o.items.length} item(s)
+                  {new Date(o.createdAt).toLocaleDateString()} · {o.items.length} item(s)
                 </p>
               </div>
               <StatusBadge status={o.status} />

@@ -78,12 +78,7 @@ export default function AuthView() {
         <form onSubmit={handleVerify} className="space-y-3">
           <label className="form-control">
             <span className="label-text">Email</span>
-            <input
-              className={inputCls}
-              type="email"
-              value={email}
-              disabled
-            />
+            <input className={inputCls} type="email" value={email} disabled />
           </label>
           <label className="form-control">
             <span className="label-text">Verification code</span>
@@ -113,10 +108,7 @@ export default function AuthView() {
       </h2>
       {error && <Alert type="error">{error}</Alert>}
       {info && <Alert type="info">{info}</Alert>}
-      <form
-        onSubmit={mode === "login" ? handleLogin : handleSignup}
-        className="space-y-3"
-      >
+      <form onSubmit={mode === "login" ? handleLogin : handleSignup} className="space-y-3">
         {mode === "signup" && (
           <label className="form-control">
             <span className="label-text">Username</span>
@@ -149,11 +141,7 @@ export default function AuthView() {
           />
         </label>
         <button className="btn btn-primary w-full" disabled={busy}>
-          {busy
-            ? "Please wait…"
-            : mode === "login"
-              ? "Log in"
-              : "Sign up"}
+          {busy ? "Please wait…" : mode === "login" ? "Log in" : "Sign up"}
         </button>
       </form>
       <div className="mt-3 text-center text-sm">

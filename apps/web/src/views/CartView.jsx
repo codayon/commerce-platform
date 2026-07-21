@@ -53,13 +53,8 @@ export default function CartView({ onCartChange }) {
   if (justOrdered) {
     return (
       <div className="mx-auto max-w-md text-center">
-        <Alert type="success">
-          Order placed! It is now waiting for payment confirmation.
-        </Alert>
-        <button
-          className="btn btn-primary mt-4"
-          onClick={() => setJustOrdered(false)}
-        >
+        <Alert type="success">Order placed! It is now waiting for payment confirmation.</Alert>
+        <button className="btn btn-primary mt-4" onClick={() => setJustOrdered(false)}>
           Back to cart
         </button>
       </div>
@@ -67,16 +62,11 @@ export default function CartView({ onCartChange }) {
   }
 
   const items = cart.items || [];
-  const total = items.reduce(
-    (sum, i) => sum + (i.product?.price || 0) * i.quantity,
-    0,
-  );
+  const total = items.reduce((sum, i) => sum + (i.product?.price || 0) * i.quantity, 0);
 
   if (items.length === 0) {
     return (
-      <Alert type="info">
-        Your cart is empty. Browse products and add something you like.
-      </Alert>
+      <Alert type="info">Your cart is empty. Browse products and add something you like.</Alert>
     );
   }
 
@@ -107,11 +97,7 @@ export default function CartView({ onCartChange }) {
 
       <div className="flex items-center justify-between mt-4">
         <span className="text-lg font-semibold">Total: ${total}</span>
-        <button
-          className="btn btn-primary"
-          disabled={busy}
-          onClick={handleCheckout}
-        >
+        <button className="btn btn-primary" disabled={busy} onClick={handleCheckout}>
           {busy ? "Placing order…" : "Checkout"}
         </button>
       </div>

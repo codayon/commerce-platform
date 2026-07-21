@@ -56,10 +56,8 @@ export const api = {
 
   // Cart
   getCart: () => request("GET", "/cart/get-cart"),
-  addToCart: (product, quantity = 1) =>
-    request("POST", "/cart/add-item", { product, quantity }),
-  removeFromCart: (productId) =>
-    request("DELETE", `/cart/remove-item/${productId}`),
+  addToCart: (product, quantity = 1) => request("POST", "/cart/add-item", { product, quantity }),
+  removeFromCart: (productId) => request("DELETE", `/cart/remove-item/${productId}`),
 
   // Orders
   createOrder: () => request("POST", "/order/create-order"),

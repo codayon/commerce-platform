@@ -20,9 +20,7 @@ export default function AccountView() {
   }
 
   if (bye) {
-    return (
-      <Alert type="success">You have been logged out. See you soon!</Alert>
-    );
+    return <Alert type="success">You have been logged out. See you soon!</Alert>;
   }
 
   return (

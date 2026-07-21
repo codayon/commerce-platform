@@ -78,9 +78,7 @@ export default function ProductsView({ onCartChange }) {
           <div key={p._id} className="card bg-base-100 shadow-sm">
             <div className="card-body">
               <h3 className="card-title">{p.name}</h3>
-              <p className="text-sm opacity-70 line-clamp-2">
-                {p.description}
-              </p>
+              <p className="text-sm opacity-70 line-clamp-2">{p.description}</p>
               <div className="flex items-center justify-between mt-2">
                 <span className="text-lg font-semibold">${p.price}</span>
                 <span className="text-xs opacity-60">
