@@ -38,9 +38,9 @@
 
 ### Cart
 
-- [ ] View cart
-- [ ] Add item
-- [ ] Remove item
+- [x] View cart
+- [x] Add item
+- [x] Remove item
 
 ### Orders
 

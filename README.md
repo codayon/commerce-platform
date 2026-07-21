@@ -140,6 +140,16 @@ Prefixed with `/product/`.
 | PATCH  | `/update-product/:productId` |
 | DELETE | `/delete-product/:productId` |
 
+### Cart
+
+Prefixed with `/cart/`. Requires an authenticated session.
+
+| Method | Endpoint                  |
+| ------ | ------------------------- |
+| GET    | `/get-cart`               |
+| POST   | `/add-item`               |
+| DELETE | `/remove-item/:productId` |
+
 ## Roadmap
 
 Planned work is tracked in [ROADMAP.md](ROADMAP.md).
