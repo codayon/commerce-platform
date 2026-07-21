@@ -44,6 +44,22 @@ A full-stack commerce application built with React, Express, and MongoDB. The re
 
 - Retrieve authenticated user profile
 
+### Cart
+
+- View cart
+- Add item
+- Remove item
+
+### Orders
+
+- Create order from cart
+- View order history
+- View order details
+
+### Payments
+
+- Payment webhook integration (HMAC-SHA256 signature verification)
+
 ## Technology Stack
 
 ### Backend
@@ -149,6 +165,24 @@ Prefixed with `/cart/`. Requires an authenticated session.
 | GET    | `/get-cart`               |
 | POST   | `/add-item`               |
 | DELETE | `/remove-item/:productId` |
+
+### Orders
+
+Prefixed with `/order/`. Requires an authenticated session.
+
+| Method | Endpoint                  |
+| ------ | ------------------------- |
+| POST   | `/create-order`           |
+| GET    | `/order-history`          |
+| GET    | `/order-details/:orderId` |
+
+### Payments
+
+Prefixed with `/payment/`. The webhook verifies an HMAC-SHA256 signature sent in the `x-payment-signature` header against `PAYMENT_WEBHOOK_SECRET`.
+
+| Method | Endpoint   |
+| ------ | ---------- |
+| POST   | `/webhook` |
 
 ## Roadmap
 

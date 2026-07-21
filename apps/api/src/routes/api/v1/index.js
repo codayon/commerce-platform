@@ -3,6 +3,7 @@ import authRoutes from "./auth.js";
 import cartRoutes from "./cart.js";
 import categoryRoutes from "./category.js";
 import orderRoutes from "./order.js";
+import paymentRoutes from "./payment.js";
 import productRoutes from "./product.js";
 import userRoutes from "./user.js";
 
@@ -12,6 +13,7 @@ router.use("/auth", authRoutes);
 router.use("/cart", cartRoutes);
 router.use("/category", categoryRoutes);
 router.use("/order", orderRoutes);
+router.use("/payment", paymentRoutes);
 router.use("/product", productRoutes);
 router.use("/user", userRoutes);
 

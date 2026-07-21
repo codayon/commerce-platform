@@ -26,7 +26,15 @@ app.use(
   }),
 );
 
-app.use(express.json());
+app.use(
+  express.json({
+    verify: (req, _res, buf) => {
+      if (buf && buf.length) {
+        req.rawBody = buf.toString("utf8");
+      }
+    },
+  }),
+);
 
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
 

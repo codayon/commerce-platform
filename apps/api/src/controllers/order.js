@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import Order from "../models/order.js";
+import Payment from "../models/payment.js";
 import Cart from "../models/cart.js";
 
 async function createOrder(req, res, next) {
@@ -54,12 +55,22 @@ async function createOrder(req, res, next) {
       status: "pending",
     });
 
+    const payment = await Payment.create({
+      order: order._id,
+      user: req.session.userId,
+      amount: totalAmount,
+      status: "requires_payment",
+    });
+
+    order.payment = payment._id;
+    await order.save();
+
     cart.items = [];
     await cart.save();
 
-    const populatedOrder = await Order.findById(order._id).populate(
-      "items.product",
-    );
+    const populatedOrder = await Order.findById(order._id)
+      .populate("items.product")
+      .populate("payment");
 
     return res.status(201).json({
       success: true,
@@ -75,7 +86,8 @@ async function getOrderHistory(req, res, next) {
   try {
     const orders = await Order.find({ user: req.session.userId })
       .sort("-createdAt")
-      .populate("items.product");
+      .populate("items.product")
+      .populate("payment");
 
     return res.status(200).json({
       success: true,
@@ -101,7 +113,9 @@ async function getOrderDetails(req, res, next) {
     const order = await Order.findOne({
       _id: orderId,
       user: req.session.userId,
-    }).populate("items.product");
+    })
+      .populate("items.product")
+      .populate("payment");
 
     if (!order) {
       return res.status(404).json({

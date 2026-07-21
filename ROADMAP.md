@@ -26,10 +26,6 @@
 - [x] Update product
 - [x] Delete product
 
----
-
-## Next
-
 ### Catalog
 
 - [x] List products
@@ -44,13 +40,13 @@
 
 ### Orders
 
-- [ ] Create order
-- [ ] Order history
-- [ ] Order details
+- [x] Create order
+- [x] Order history
+- [x] Order details
 
 ### Payments
 
-- [ ] Payment webhook integration
+- [x] Payment webhook integration
 
 ---
 
