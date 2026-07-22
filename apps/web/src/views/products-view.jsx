@@ -11,6 +11,8 @@ export default function ProductsView({ onCartChange }) {
   const [addError, setAddError] = useState("");
   const [loading, setLoading] = useState(true);
   const [addedId, setAddedId] = useState(null);
+  // Per-product quantity the user wants before adding to cart.
+  const [qtyById, setQtyById] = useState({});
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -33,11 +35,26 @@ export default function ProductsView({ onCartChange }) {
     load();
   }, [load]);
 
-  async function handleAdd(productId) {
+  function getQty(productId) {
+    return qtyById[productId] || 1;
+  }
+
+  function setQty(productId, next) {
+    const clamped = Math.max(1, Math.min(next, 99));
+    setQtyById((prev) => ({ ...prev, [productId]: clamped }));
+  }
+
+  async function handleAdd(product) {
     setAddError("");
+    const qty = getQty(product._id);
+    // Respect stock; don't let the user queue more than available.
+    if (qty > product.stock) {
+      setAddError(`Only ${product.stock} of ${product.name} in stock`);
+      return;
+    }
     try {
-      await api.addToCart(productId, 1);
-      setAddedId(productId);
+      await api.addToCart(product._id, qty);
+      setAddedId(product._id);
       setTimeout(() => setAddedId(null), 1500);
       onCartChange?.();
     } catch (err) {
@@ -88,11 +105,40 @@ export default function ProductsView({ onCartChange }) {
                   {p.stock > 0 ? `${p.stock} in stock` : "Out of stock"}
                 </span>
               </div>
-              <div className="card-actions justify-end">
+              <div className="card-actions justify-end items-center mt-2">
+                {p.stock > 0 && (
+                  <div className="join">
+                    <button
+                      type="button"
+                      className="btn btn-sm join-item"
+                      aria-label={`Decrease ${p.name} quantity`}
+                      onClick={() => setQty(p._id, getQty(p._id) - 1)}
+                    >
+                      −
+                    </button>
+                    <input
+                      type="number"
+                      min={1}
+                      max={p.stock}
+                      value={getQty(p._id)}
+                      onChange={(e) => setQty(p._id, parseInt(e.target.value) || 1)}
+                      className="input input-sm join-item w-14 text-center"
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-sm join-item"
+                      aria-label={`Increase ${p.name} quantity`}
+                      disabled={getQty(p._id) >= p.stock}
+                      onClick={() => setQty(p._id, getQty(p._id) + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+                )}
                 <button
                   className="btn btn-primary btn-sm"
                   disabled={p.stock <= 0}
-                  onClick={() => handleAdd(p._id)}
+                  onClick={() => handleAdd(p)}
                 >
                   {addedId === p._id ? "Added ✓" : "Add to cart"}
                 </button>

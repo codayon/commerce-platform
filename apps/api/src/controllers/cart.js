@@ -141,6 +141,69 @@ async function removeItem(req, res, next) {
   }
 }
 
+// Set an item's quantity to an absolute value. If the quantity is 0 or less
+// the line is removed from the cart. Used by the +/- steppers in the UI.
+async function updateQuantity(req, res, next) {
+  try {
+    const { productId } = req.params;
+    const { quantity } = req.body;
+
+    if (!Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid product ID",
+      });
+    }
+
+    const qty = parseInt(quantity);
+    if (isNaN(qty) || qty < 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Quantity must be a non-negative integer",
+      });
+    }
+
+    const cart = await Cart.findOne(resolveOwner(req)).populate("items.product");
+
+    if (!cart) {
+      return res.status(404).json({
+        success: false,
+        message: "Cart not found",
+      });
+    }
+
+    if (qty <= 0) {
+      cart.items = cart.items.filter((i) => i.product._id.toString() !== productId);
+    } else {
+      const item = cart.items.find((i) => i.product._id.toString() === productId);
+      if (!item) {
+        return res.status(404).json({
+          success: false,
+          message: "Item not found in cart",
+        });
+      }
+      if (item.product.stock != null && qty > item.product.stock) {
+        return res.status(400).json({
+          success: false,
+          message: `Only ${item.product.stock} in stock`,
+        });
+      }
+      item.quantity = qty;
+    }
+
+    await cart.save();
+    await cart.populate("items.product");
+
+    return res.status(200).json({
+      success: true,
+      message: "Cart updated",
+      data: cart,
+    });
+  } catch (err) {
+    return next(err);
+  }
+}
+
 // Merge a guest's session cart into the logged-in user's cart. Called by the
 // auth flow right after a session is established. The guest cart is removed
 // once its items are folded into the user cart.
@@ -170,4 +233,4 @@ async function mergeGuestCart(sessionId, userId) {
   await Cart.deleteOne({ _id: guestCart._id });
 }
 
-export { getCart, addItem, removeItem, mergeGuestCart };
+export { getCart, addItem, removeItem, updateQuantity, mergeGuestCart };

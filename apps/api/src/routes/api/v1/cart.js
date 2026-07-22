@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getCart, addItem, removeItem } from "../../../controllers/cart.js";
+import { getCart, addItem, removeItem, updateQuantity } from "../../../controllers/cart.js";
 
 const router = Router();
 
@@ -63,5 +63,32 @@ router.post("/add-item", addItem);
  *       404: { description: Cart or item not found }
  */
 router.delete("/remove-item/:productId", removeItem);
+
+/**
+ * @openapi
+ * /cart/update-quantity/{productId}:
+ *   patch:
+ *     summary: Set the quantity of an item in the cart
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema: { type: string }
+ *         description: Product ID to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [quantity]
+ *             properties:
+ *               quantity: { type: integer, minimum: 0, description: Absolute quantity; 0 removes the item }
+ *     responses:
+ *       200: { description: Cart updated }
+ *       400: { description: Invalid product ID or quantity }
+ *       404: { description: Cart or item not found }
+ */
+router.patch("/update-quantity/:productId", updateQuantity);
 
 export default router;

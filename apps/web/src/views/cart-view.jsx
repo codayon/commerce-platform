@@ -28,9 +28,14 @@ export default function CartView({ onCartChange, onRequireAuth }) {
     load();
   }, [load]);
 
-  async function handleRemove(productId) {
+  async function handleQty(item, delta) {
+    const next = item.quantity + delta;
     try {
-      await api.removeFromCart(productId);
+      if (next <= 0) {
+        await api.removeFromCart(item.product._id);
+      } else {
+        await api.updateCartQty(item.product._id, next);
+      }
       await load();
       onCartChange?.();
     } catch (err) {
@@ -98,12 +103,28 @@ export default function CartView({ onCartChange, onRequireAuth }) {
                 ${i.product?.price} × {i.quantity}
               </p>
             </div>
-            <button
-              className="btn btn-ghost btn-sm text-error"
-              onClick={() => handleRemove(i.product?._id)}
-            >
-              Remove
-            </button>
+            <div className="join">
+              <button
+                type="button"
+                className="btn btn-sm join-item"
+                aria-label={`Decrease ${i.product?.name} quantity`}
+                onClick={() => handleQty(i, -1)}
+              >
+                −
+              </button>
+              <span className="btn btn-sm join-item no-animation w-10 pointer-events-none">
+                {i.quantity}
+              </span>
+              <button
+                type="button"
+                className="btn btn-sm join-item"
+                aria-label={`Increase ${i.product?.name} quantity`}
+                disabled={i.product?.stock != null && i.quantity >= i.product.stock}
+                onClick={() => handleQty(i, 1)}
+              >
+                +
+              </button>
+            </div>
           </li>
         ))}
       </ul>
