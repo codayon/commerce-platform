@@ -8,6 +8,7 @@ export default function ProductsView({ onCartChange }) {
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
   const [error, setError] = useState("");
+  const [addError, setAddError] = useState("");
   const [loading, setLoading] = useState(true);
   const [addedId, setAddedId] = useState(null);
 
@@ -33,13 +34,14 @@ export default function ProductsView({ onCartChange }) {
   }, [load]);
 
   async function handleAdd(productId) {
+    setAddError("");
     try {
       await api.addToCart(productId, 1);
       setAddedId(productId);
       setTimeout(() => setAddedId(null), 1500);
       onCartChange?.();
     } catch (err) {
-      setError(err.message);
+      setAddError(err.message);
     }
   }
 
@@ -67,6 +69,7 @@ export default function ProductsView({ onCartChange }) {
       </div>
 
       {error && <Alert type="error">{error}</Alert>}
+      {addError && <Alert type="error">{addError}</Alert>}
       {loading && <div className="text-center py-8">Loading…</div>}
 
       {!loading && products.length === 0 && (

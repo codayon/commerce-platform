@@ -264,6 +264,11 @@ async function verifyOtp(req, res, next) {
 
     await user.save({ validateBeforeSave: false });
 
+    // Establish the session so the just-verified user is logged in
+    // immediately instead of being dumped into the app with no cookie.
+    req.session.userId = user._id;
+    req.session.email = user.email;
+
     return res.status(200).json({
       success: true,
       message: "Email verified successfully",

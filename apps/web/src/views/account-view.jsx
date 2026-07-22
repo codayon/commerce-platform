@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { api } from "../lib/api.js";
 import { useAuth } from "../context/auth-context.jsx";
 import { Alert } from "../components/alert.jsx";
 
@@ -11,8 +10,7 @@ export default function AccountView() {
   async function handleLogout() {
     setError("");
     try {
-      await api.logout();
-      logout();
+      await logout();
       setBye(true);
     } catch (err) {
       setError(err.message);
