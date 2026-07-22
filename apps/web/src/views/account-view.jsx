@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { api } from "../lib/api.js";
-import { useAuth } from "../context/AuthContext.jsx";
-import { Alert } from "../components/Alert.jsx";
+import { useAuth } from "../context/auth-context.jsx";
+import { Alert } from "../components/alert.jsx";
 
 export default function AccountView() {
   const { user, logout } = useAuth();

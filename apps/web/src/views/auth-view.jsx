@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { api } from "../lib/api.js";
-import { useAuth } from "../context/AuthContext.jsx";
-import { Alert } from "../components/Alert.jsx";
+import { useAuth } from "../context/auth-context.jsx";
+import { Alert } from "../components/alert.jsx";
 
 export default function AuthView() {
   const { login, markVerified } = useAuth();
@@ -75,7 +75,7 @@ export default function AuthView() {
         <h2 className="text-xl font-semibold mb-2">Verify your email</h2>
         {error && <Alert type="error">{error}</Alert>}
         {info && <Alert type="info">{info}</Alert>}
-        <form onSubmit={handleVerify} className="space-y-5">
+        <form onSubmit={handleVerify} className="flex flex-col gap-5">
           <label className="form-control">
             <span className="label-text">Email</span>
             <input className={inputCls} type="email" value={email} disabled />
@@ -108,7 +108,10 @@ export default function AuthView() {
       </h2>
       {error && <Alert type="error">{error}</Alert>}
       {info && <Alert type="info">{info}</Alert>}
-      <form onSubmit={mode === "login" ? handleLogin : handleSignup} className="space-y-5">
+      <form
+        onSubmit={mode === "login" ? handleLogin : handleSignup}
+        className="flex flex-col gap-5"
+      >
         {mode === "signup" && (
           <label className="form-control">
             <span className="label-text">Username</span>

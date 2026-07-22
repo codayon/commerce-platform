@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { api } from "./lib/api.js";
-import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
-import AuthView from "./views/AuthView.jsx";
-import ProductsView from "./views/ProductsView.jsx";
-import CartView from "./views/CartView.jsx";
-import OrdersView from "./views/OrdersView.jsx";
-import AccountView from "./views/AccountView.jsx";
+import { AuthProvider, useAuth } from "./context/auth-context.jsx";
+import AuthView from "./views/auth-view.jsx";
+import ProductsView from "./views/products-view.jsx";
+import CartView from "./views/cart-view.jsx";
+import OrdersView from "./views/orders-view.jsx";
+import AccountView from "./views/account-view.jsx";
 
 function Shell() {
   const { user, loading } = useAuth();
@@ -52,13 +52,13 @@ function Shell() {
   const renderTab = () => {
     switch (tab) {
       case "products":
-        return <ProductsView onCartChange={refreshCart} />;
+        return <ProductsView key="products" onCartChange={refreshCart} />;
       case "cart":
-        return <CartView onCartChange={refreshCart} />;
+        return <CartView key="cart" onCartChange={refreshCart} />;
       case "orders":
-        return <OrdersView />;
+        return <OrdersView key="orders" />;
       case "account":
-        return <AccountView />;
+        return <AccountView key="account" />;
       default:
         return null;
     }

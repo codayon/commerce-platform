@@ -1,19 +1,24 @@
 import { useEffect, useState, useCallback } from "react";
 import { api } from "../lib/api.js";
-import { Alert } from "../components/Alert.jsx";
+import { Alert } from "../components/alert.jsx";
 
 export default function CartView({ onCartChange }) {
   const [cart, setCart] = useState(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [justOrdered, setJustOrdered] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
     try {
       const res = await api.getCart();
       setCart(res.data);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -46,7 +51,7 @@ export default function CartView({ onCartChange }) {
     }
   }
 
-  if (!cart) {
+  if (loading) {
     return <div className="text-center py-8">Loading…</div>;
   }
 

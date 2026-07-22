@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { api } from "../lib/api.js";
-import { Alert } from "../components/Alert.jsx";
+import { Alert } from "../components/alert.jsx";
 
 function StatusBadge({ status }) {
   const cls = {
