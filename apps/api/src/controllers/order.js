@@ -5,9 +5,7 @@ import Cart from "../models/cart.js";
 
 async function createOrder(req, res, next) {
   try {
-    const cart = await Cart.findOne({ user: req.session.userId }).populate(
-      "items.product",
-    );
+    const cart = await Cart.findOne({ user: req.session.userId }).populate("items.product");
 
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({

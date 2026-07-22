@@ -75,7 +75,7 @@ export default function AuthView() {
         <h2 className="text-xl font-semibold mb-2">Verify your email</h2>
         {error && <Alert type="error">{error}</Alert>}
         {info && <Alert type="info">{info}</Alert>}
-        <form onSubmit={handleVerify} className="space-y-3">
+        <form onSubmit={handleVerify} className="space-y-5">
           <label className="form-control">
             <span className="label-text">Email</span>
             <input className={inputCls} type="email" value={email} disabled />
@@ -108,7 +108,7 @@ export default function AuthView() {
       </h2>
       {error && <Alert type="error">{error}</Alert>}
       {info && <Alert type="info">{info}</Alert>}
-      <form onSubmit={mode === "login" ? handleLogin : handleSignup} className="space-y-3">
+      <form onSubmit={mode === "login" ? handleLogin : handleSignup} className="space-y-5">
         {mode === "signup" && (
           <label className="form-control">
             <span className="label-text">Username</span>
