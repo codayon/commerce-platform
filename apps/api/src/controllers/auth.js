@@ -3,6 +3,7 @@ import validator from "validator";
 import User from "../models/user.js";
 import sendOtpEmail from "../utils/email.js";
 import generateOtp from "../utils/generate-otp.js";
+import { mergeGuestCart } from "./cart.js";
 
 async function logIn(req, res, next) {
   try {
@@ -56,6 +57,7 @@ async function logIn(req, res, next) {
 
     req.session.userId = user._id;
     req.session.email = user.email;
+    await mergeGuestCart(req.session.cartSessionId, user._id);
 
     return res.status(200).json({
       success: true,
@@ -268,6 +270,7 @@ async function verifyOtp(req, res, next) {
     // immediately instead of being dumped into the app with no cookie.
     req.session.userId = user._id;
     req.session.email = user.email;
+    await mergeGuestCart(req.session.cartSessionId, user._id);
 
     return res.status(200).json({
       success: true,

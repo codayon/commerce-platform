@@ -2,12 +2,25 @@ import { Types } from "mongoose";
 import Cart from "../models/cart.js";
 import Product from "../models/product.js";
 
+// Resolve the cart owner from the request: a logged-in user (preferred) or a
+// guest session. We always force the session cookie to persist so guests have
+// a stable cart across requests.
+function resolveOwner(req) {
+  if (req.session.userId) {
+    return { user: req.session.userId };
+  }
+  if (!req.session.cartSessionId) {
+    req.session.cartSessionId = new Types.ObjectId().toString();
+  }
+  return { sessionId: req.session.cartSessionId };
+}
+
 async function getCart(req, res, next) {
   try {
-    let cart = await Cart.findOne({ user: req.session.userId }).populate("items.product");
+    let cart = await Cart.findOne(resolveOwner(req)).populate("items.product");
 
     if (!cart) {
-      cart = await Cart.create({ user: req.session.userId, items: [] });
+      cart = await Cart.create({ ...resolveOwner(req), items: [] });
     }
 
     return res.status(200).json({
@@ -56,10 +69,11 @@ async function addItem(req, res, next) {
       });
     }
 
-    let cart = await Cart.findOne({ user: req.session.userId });
+    const owner = resolveOwner(req);
+    let cart = await Cart.findOne(owner);
 
     if (!cart) {
-      cart = await Cart.create({ user: req.session.userId, items: [] });
+      cart = await Cart.create({ ...owner, items: [] });
     }
 
     const item = cart.items.find((i) => i.product.toString() === product);
@@ -94,7 +108,7 @@ async function removeItem(req, res, next) {
       });
     }
 
-    const cart = await Cart.findOne({ user: req.session.userId });
+    const cart = await Cart.findOne(resolveOwner(req));
 
     if (!cart) {
       return res.status(404).json({
@@ -127,4 +141,33 @@ async function removeItem(req, res, next) {
   }
 }
 
-export { getCart, addItem, removeItem };
+// Merge a guest's session cart into the logged-in user's cart. Called by the
+// auth flow right after a session is established. The guest cart is removed
+// once its items are folded into the user cart.
+async function mergeGuestCart(sessionId, userId) {
+  if (!sessionId || !userId) return;
+
+  const guestCart = await Cart.findOne({ sessionId });
+  if (!guestCart || guestCart.items.length === 0) return;
+
+  let userCart = await Cart.findOne({ user: userId });
+  if (!userCart) {
+    userCart = await Cart.create({ user: userId, items: [] });
+  }
+
+  for (const guestItem of guestCart.items) {
+    const existing = userCart.items.find(
+      (i) => i.product.toString() === guestItem.product.toString(),
+    );
+    if (existing) {
+      existing.quantity += guestItem.quantity;
+    } else {
+      userCart.items.push({ product: guestItem.product, quantity: guestItem.quantity });
+    }
+  }
+
+  await userCart.save();
+  await Cart.deleteOne({ _id: guestCart._id });
+}
+
+export { getCart, addItem, removeItem, mergeGuestCart };

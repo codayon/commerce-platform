@@ -1,10 +1,7 @@
 import { Router } from "express";
 import { getCart, addItem, removeItem } from "../../../controllers/cart.js";
-import { protect } from "../../../middlewares/auth.js";
 
 const router = Router();
-
-router.use(protect);
 
 /**
  * @openapi

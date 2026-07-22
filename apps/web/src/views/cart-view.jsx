@@ -1,8 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 import { api } from "../lib/api.js";
+import { useAuth } from "../context/auth-context.jsx";
 import { Alert } from "../components/alert.jsx";
 
-export default function CartView({ onCartChange }) {
+export default function CartView({ onCartChange, onRequireAuth }) {
+  const { user } = useAuth();
   const [cart, setCart] = useState(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -37,6 +39,12 @@ export default function CartView({ onCartChange }) {
   }
 
   async function handleCheckout() {
+    // Guests browse and fill the cart freely; placing the order requires an
+    // account so we can attach the order and process payment. Prompt login.
+    if (!user) {
+      onRequireAuth?.();
+      return;
+    }
     setError("");
     setBusy(true);
     try {
@@ -102,9 +110,15 @@ export default function CartView({ onCartChange }) {
 
       <div className="flex items-center justify-between mt-4">
         <span className="text-lg font-semibold">Total: ${total}</span>
-        <button className="btn btn-primary" disabled={busy} onClick={handleCheckout}>
-          {busy ? "Placing order…" : "Checkout"}
-        </button>
+        {user ? (
+          <button className="btn btn-primary" disabled={busy} onClick={handleCheckout}>
+            {busy ? "Placing order…" : "Checkout"}
+          </button>
+        ) : (
+          <button className="btn btn-primary" onClick={handleCheckout}>
+            Log in to check out
+          </button>
+        )}
       </div>
     </div>
   );

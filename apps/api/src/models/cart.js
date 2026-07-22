@@ -22,8 +22,11 @@ const cartSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "User is required"],
-      unique: true,
+    },
+    // Present for guest (not-yet-log-in) carts, keyed by the visitor's
+    // session id. Exactly one of `user` / `sessionId` identifies a cart.
+    sessionId: {
+      type: String,
     },
     items: [cartItemSchema],
   },
@@ -31,6 +34,11 @@ const cartSchema = new Schema(
     timestamps: true,
   },
 );
+
+// A cart is owned by either a logged-in user or a guest session, never both.
+// Enforce a single cart per owner and support fast guest lookups.
+cartSchema.index({ user: 1 }, { unique: true, sparse: true });
+cartSchema.index({ sessionId: 1 }, { unique: true, sparse: true });
 
 const Cart = model("Cart", cartSchema);
 

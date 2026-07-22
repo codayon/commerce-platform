@@ -3,7 +3,7 @@ import { api } from "../lib/api.js";
 import { useAuth } from "../context/auth-context.jsx";
 import { Alert } from "../components/alert.jsx";
 
-export default function AuthView() {
+export default function AuthView({ onSuccess }) {
   const { login, markVerified } = useAuth();
   const [mode, setMode] = useState("login"); // login | signup | verify
   const [email, setEmail] = useState("");
@@ -20,6 +20,7 @@ export default function AuthView() {
     setBusy(true);
     try {
       await login(email, password);
+      onSuccess?.();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -50,6 +51,7 @@ export default function AuthView() {
     try {
       await api.verifyOtp(email, otp);
       markVerified(email);
+      onSuccess?.();
     } catch (err) {
       setError(err.message);
     } finally {
