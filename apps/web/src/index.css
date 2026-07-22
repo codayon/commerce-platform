@@ -2,3 +2,21 @@
 @plugin "daisyui" {
   themes: light --default;
 }
+
+/* Nav/footer tab buttons live inside DaisyUI's .menu, whose :active state
+   paints a near-black background. We don't want that dark flash on click —
+   a selected/clicked tab should look like a normal button. Disable the
+   menu :active highlight on these buttons and give a subtle selected style. */
+.menu :where(li > .tab-btn):active,
+.menu :where(li > .tab-btn).tab-active,
+.btm-nav .tab-btn:active,
+.btm-nav .tab-btn.tab-active {
+  background-color: transparent;
+  color: var(--color-base-content);
+  box-shadow: none;
+}
+
+.menu :where(li > .tab-btn).tab-active {
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-primary);
+}

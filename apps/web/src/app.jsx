@@ -78,7 +78,10 @@ function Shell() {
           <ul className="menu menu-horizontal px-1 gap-1">
             {tabs.map((t) => (
               <li key={t.id}>
-                <button className={tab === t.id ? "active" : ""} onClick={() => selectTab(t.id)}>
+                <button
+                  className={`tab-btn ${tab === t.id ? "tab-active" : ""}`}
+                  onClick={() => selectTab(t.id)}
+                >
                   {t.label}
                   {t.id === "cart" && cartCount > 0 && (
                     <span className="badge badge-sm badge-primary">{cartCount}</span>
@@ -102,7 +105,7 @@ function Shell() {
         {tabs.map((t) => (
           <button
             key={t.id}
-            className={tab === t.id ? "active" : ""}
+            className={`tab-btn ${tab === t.id ? "tab-active" : ""}`}
             onClick={() => selectTab(t.id)}
           >
             <span>{t.label}</span>
