@@ -1,10 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../lib/api.js";
 import { useAuth } from "../context/auth-context.jsx";
+import { useCart } from "../context/cart-context.jsx";
 import { Alert } from "../components/alert.jsx";
 
-export default function CartView({ onCartChange, onRequireAuth }) {
+export default function CartView() {
   const { user } = useAuth();
+  const { refresh } = useCart();
+  const navigate = useNavigate();
   const [cart, setCart] = useState(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -37,7 +41,7 @@ export default function CartView({ onCartChange, onRequireAuth }) {
         await api.updateCartQty(item.product._id, next);
       }
       await load();
-      onCartChange?.();
+      refresh();
     } catch (err) {
       setError(err.message);
     }
@@ -45,9 +49,10 @@ export default function CartView({ onCartChange, onRequireAuth }) {
 
   async function handleCheckout() {
     // Guests browse and fill the cart freely; placing the order requires an
-    // account so we can attach the order and process payment. Prompt login.
+    // account so we can attach the order and process payment. Send them to
+    // the login route and come back here afterwards.
     if (!user) {
-      onRequireAuth?.();
+      navigate("/login?redirect=/cart");
       return;
     }
     setError("");
@@ -56,7 +61,7 @@ export default function CartView({ onCartChange, onRequireAuth }) {
       await api.createOrder();
       setJustOrdered(true);
       await load();
-      onCartChange?.();
+      refresh();
     } catch (err) {
       setError(err.message);
     } finally {

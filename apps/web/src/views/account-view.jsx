@@ -1,24 +1,21 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth-context.jsx";
 import { Alert } from "../components/alert.jsx";
 
 export default function AccountView() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [error, setError] = useState("");
-  const [bye, setBye] = useState(false);
 
   async function handleLogout() {
     setError("");
     try {
       await logout();
-      setBye(true);
+      navigate("/");
     } catch (err) {
       setError(err.message);
     }
-  }
-
-  if (bye) {
-    return <Alert type="success">You have been logged out. See you soon!</Alert>;
   }
 
   return (

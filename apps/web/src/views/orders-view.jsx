@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../lib/api.js";
 import { Alert } from "../components/alert.jsx";
 
@@ -15,7 +16,6 @@ function StatusBadge({ status }) {
 
 export default function OrdersView() {
   const [orders, setOrders] = useState([]);
-  const [selected, setSelected] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -36,50 +36,6 @@ export default function OrdersView() {
     load();
   }, [load]);
 
-  async function openOrder(orderId) {
-    setError("");
-    try {
-      const res = await api.orderDetails(orderId);
-      setSelected(res.data);
-    } catch (err) {
-      setError(err.message);
-    }
-  }
-
-  if (selected) {
-    return (
-      <div className="max-w-2xl mx-auto">
-        <button className="btn btn-link btn-sm mb-2" onClick={() => setSelected(null)}>
-          ← Back to orders
-        </button>
-        <div className="card bg-base-100 shadow-sm p-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Order</h3>
-            <StatusBadge status={selected.status} />
-          </div>
-          <p className="text-sm opacity-60">
-            Placed {new Date(selected.createdAt).toLocaleString()}
-          </p>
-          <p className="text-sm opacity-60 mb-2">Payment: {selected.payment?.status || "—"}</p>
-          <ul className="divide-y">
-            {selected.items.map((i, idx) => (
-              <li key={idx} className="py-2 flex justify-between">
-                <span>
-                  {i.product?.name || "Product"} × {i.quantity}
-                </span>
-                <span>${i.price * i.quantity}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="flex justify-between font-semibold border-t pt-2">
-            <span>Total</span>
-            <span>${selected.totalAmount}</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (loading) return <div className="text-center py-8">Loading…</div>;
 
   if (orders.length === 0) {
@@ -92,9 +48,9 @@ export default function OrdersView() {
       <ul className="space-y-2">
         {orders.map((o) => (
           <li key={o._id}>
-            <button
-              className="w-full text-left card bg-base-100 shadow-sm p-3 flex items-center justify-between hover:bg-base-200"
-              onClick={() => openOrder(o._id)}
+            <Link
+              to={`/orders/${o._id}`}
+              className="block card bg-base-100 shadow-sm p-3 flex items-center justify-between hover:bg-base-200"
             >
               <div>
                 <p className="font-medium">Order · ${o.totalAmount}</p>
@@ -103,7 +59,7 @@ export default function OrdersView() {
                 </p>
               </div>
               <StatusBadge status={o.status} />
-            </button>
+            </Link>
           </li>
         ))}
       </ul>

@@ -1,18 +1,32 @@
 import { useEffect, useState, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { api } from "../lib/api.js";
 import { Alert } from "../components/alert.jsx";
+import { useCart } from "../context/cart-context.jsx";
 
-export default function ProductsView({ onCartChange }) {
+export default function ProductsView() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { refresh } = useCart();
+  const q = searchParams.get("q") || "";
+  const category = searchParams.get("category") || "";
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [q, setQ] = useState("");
-  const [category, setCategory] = useState("");
   const [error, setError] = useState("");
   const [addError, setAddError] = useState("");
   const [loading, setLoading] = useState(true);
   const [addedId, setAddedId] = useState(null);
   // Per-product quantity the user wants before adding to cart.
   const [qtyById, setQtyById] = useState({});
+
+  // Keep the URL (search + category) as the single source of truth so the
+  // view is shareable and survives reloads.
+  function updateParam(key, value) {
+    const next = new URLSearchParams(searchParams);
+    if (value) next.set(key, value);
+    else next.delete(key);
+    setSearchParams(next);
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -56,7 +70,7 @@ export default function ProductsView({ onCartChange }) {
       await api.addToCart(product._id, qty);
       setAddedId(product._id);
       setTimeout(() => setAddedId(null), 1500);
-      onCartChange?.();
+      refresh();
     } catch (err) {
       setAddError(err.message);
     }
@@ -69,12 +83,12 @@ export default function ProductsView({ onCartChange }) {
           className="input input-bordered flex-1"
           placeholder="Search products…"
           value={q}
-          onChange={(e) => setQ(e.target.value)}
+          onChange={(e) => updateParam("q", e.target.value)}
         />
         <select
           className="select select-bordered"
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          onChange={(e) => updateParam("category", e.target.value)}
         >
           <option value="">All categories</option>
           {categories.map((c) => (

@@ -1,11 +1,17 @@
 import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../lib/api.js";
 import { useAuth } from "../context/auth-context.jsx";
 import { Alert } from "../components/alert.jsx";
 
-export default function AuthView({ onSuccess }) {
+export default function AuthView() {
   const { login, markVerified } = useAuth();
-  const [mode, setMode] = useState("login"); // login | signup | verify
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/";
+  const initialMode = searchParams.get("mode") === "signup" ? "signup" : "login";
+
+  const [mode, setMode] = useState(initialMode); // login | signup | verify
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -14,13 +20,17 @@ export default function AuthView({ onSuccess }) {
   const [info, setInfo] = useState("");
   const [busy, setBusy] = useState(false);
 
+  function done() {
+    navigate(redirect, { replace: true });
+  }
+
   async function handleLogin(e) {
     e.preventDefault();
     setError("");
     setBusy(true);
     try {
       await login(email, password);
-      onSuccess?.();
+      done();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -51,7 +61,7 @@ export default function AuthView({ onSuccess }) {
     try {
       await api.verifyOtp(email, otp);
       markVerified(email);
-      onSuccess?.();
+      done();
     } catch (err) {
       setError(err.message);
     } finally {
