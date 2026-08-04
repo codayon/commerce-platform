@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { api } from "../lib/api.js";
 import { Alert } from "../components/alert.jsx";
 import { useCart } from "../context/cart-context.jsx";

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router";
 import { api } from "../lib/api.js";
 import { useAuth } from "../context/auth-context.jsx";
 import { Alert } from "../components/alert.jsx";

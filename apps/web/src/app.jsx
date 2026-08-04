@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, NavLink, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, NavLink, Navigate, useLocation } from "react-router";
 import { AuthProvider, useAuth } from "./context/auth-context.jsx";
 import { CartProvider, useCart } from "./context/cart-context.jsx";
 import AuthView from "./views/auth-view.jsx";

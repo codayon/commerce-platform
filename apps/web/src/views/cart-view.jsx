@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { api } from "../lib/api.js";
 import { useAuth } from "../context/auth-context.jsx";
 import { useCart } from "../context/cart-context.jsx";
