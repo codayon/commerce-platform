@@ -24,7 +24,7 @@ npm i
 ## Run
 
 ```sh
-npm run dev -w api   # http://localhost:3000  (interactive docs at /api/docs)
+npm run dev -w api   # http://localhost:3000
 npm run dev -w web   # proxies /api -> http://localhost:3000
 ```
 

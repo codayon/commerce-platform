@@ -3,9 +3,7 @@ loadEnvFile();
 
 import express from "express";
 import session from "express-session";
-import swaggerUi from "swagger-ui-express";
 import database from "./config/database.js";
-import { openapiSpec } from "./config/swagger.js";
 import rootRouter from "./routes/index.js";
 import { errorHandler } from "./middlewares/error.js";
 
@@ -35,8 +33,6 @@ app.use(
     },
   }),
 );
-
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
 
 app.use("/", rootRouter);
 
